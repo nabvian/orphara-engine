@@ -1,0 +1,34 @@
+# Secrets and credentials — never commit these.
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.pfx
+*.gpg
+*.asc
+id_rsa
+id_ed25519
+
+# Rust build output.
+/target
+
+# Compiled models (generated from .dsdsrc; not source).
+*.dsd
+
+# Only the synthetic example model belongs in this open repo. This guards against
+# accidentally committing a private model dropped into knowledge/ for local use
+# (e.g. via ORPHARA_MODEL). Everything under knowledge/ is ignored except example/.
+/knowledge/*
+!/knowledge/example/
+!/knowledge/example/**
+
+# Editor and OS cruft.
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.bak
+*.orig
+*.tmp
+*.log

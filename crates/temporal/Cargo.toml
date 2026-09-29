@@ -1,0 +1,9 @@
+[package]
+name = "temporal"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Timeline-aware validity pass for the Blind Core: reads ConfoundedBy edges + observation timing to flag results whose reliability is time-dependent (e.g. an enzyme assay drawn during reticulocytosis). Disease-blind; additive; std-only."
+
+[dependencies]
+core-types = { path = "../core-types" }

@@ -1,0 +1,7 @@
+Red Cell Enzyme Assay
+Report Date: 6 May 2026
+Patient: (synthetic)
+
+Analyte             Result     Reference        Flag
+G6PD activity       2.1 U/g    6.0 - 18.0       Low
+Methaemoglobin      0.8 %      0.0 - 2.0

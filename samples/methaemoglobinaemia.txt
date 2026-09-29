@@ -1,0 +1,7 @@
+Clinical Note
+Date: 2 March 2026
+Patient: (synthetic) neonate.
+Central cyanosis with blue lips.
+Cyanosis unresponsive to oxygen; chocolate-brown blood on sampling.
+Elevated methaemoglobin on co-oximetry.
+Decreased cytochrome b5 reductase with biallelic CYB5R3.

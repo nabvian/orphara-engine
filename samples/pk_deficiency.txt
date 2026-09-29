@@ -1,0 +1,9 @@
+Clinical Note
+Date: 12 June 2026
+Patient: (synthetic) 6-year-old child of consanguineous parents.
+Chronic jaundice with splenomegaly.
+Pigment gallstones seen on ultrasound.
+DAT-negative, non-spherocytic smear.
+Aplastic crisis with parvovirus B19.
+Low pyruvate kinase activity on the enzyme assay.
+Biallelic pathogenic PKLR variants on sequencing.

@@ -1,0 +1,20 @@
+[package]
+name = "caretrace"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+description = "Deterministic multi-report clinical extraction + audit pipeline (Rust rewrite of the CareTrace patient side). PDF/text ingestion, layout-agnostic UCUM extraction, facts/claims/medications, change/conflict/gap detection."
+
+[dependencies]
+# Robust pure-Rust PDF text extraction — the reason for the rewrite (Python's
+# pypdf mishandled several of the report PDFs). Only the ingest module touches it,
+# and it is optional so the deterministic text pipeline stays dependency-free.
+pdf-extract = { version = "0.10", optional = true }
+regex = "1"
+once_cell = "1"
+
+[features]
+# `pdf` gates the format-aware PDF seam so the text pipeline (everything after
+# ingestion) can be built and tested with zero external deps.
+default = ["pdf"]
+pdf = ["dep:pdf-extract"]

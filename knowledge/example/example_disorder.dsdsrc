@@ -1,0 +1,96 @@
+# =============================================================================
+# EXAMPLE MODEL — SYNTHETIC, NOT MEDICAL KNOWLEDGE
+# =============================================================================
+# This file exists so the open engine can build, test and demo end to end
+# WITHOUT any real disease model. It is a made-up graph of two fictional
+# disorders with illustrative weights. Nothing here is sourced, clinically
+# reviewed, or true. Do not read it as medical guidance.
+#
+# It exercises every edge the engine understands, so the whole pipeline —
+# compile, load, rank, gate, GNN, timeline — is covered:
+#
+#   has_finding    weak / family signals (do not raise a candidate alone)
+#   discriminates  points to a disorder
+#   requires       confirmatory (missing => "Possible", never contradicted)
+#   caused_by      causal gene
+#   associated_with weak context (family history, etc.)
+#   triggered_by   things to avoid
+#   treated_by     management (stored, never scored as diagnostic support)
+#   confounded_by  a result whose validity depends on timing (read by the
+#                  timeline pass only; never moves the ranking)
+#
+# The concept KEYS (jaundice, g6pd_assay_low, cyanosis, …) are the same public
+# vocabulary the extractor packs emit, so a plain example note flows all the way
+# through. The KEYS are public; the real sourced reasoning graph is not, and is
+# never shipped here.
+# =============================================================================
+
+
+# ---- shared weak signals -----------------------------------------------------
+concept finding   fatigue              Fatigue
+concept finding   pallor               Pallor
+concept finding   jaundice             Jaundice
+concept finding   splenomegaly         Splenomegaly
+concept finding   family_history_rcd   Family history (context only)
+
+
+# =============================================================================
+# DEMO HAEMOLYTIC DISORDER — fictional
+# =============================================================================
+concept disease   demo_hemolytic   Illustrative haemolytic disorder (SYNTHETIC EXAMPLE)
+concept gene      gene_demo_a      Example gene A
+
+# weak / family
+rel demo_hemolytic has_finding    fatigue        0.2
+rel demo_hemolytic has_finding    pallor         0.2
+rel demo_hemolytic has_finding    jaundice       0.5
+rel demo_hemolytic has_finding    splenomegaly   0.5
+# discriminating
+concept finding   hemoglobinuria     Dark urine (example discriminator)
+concept finding   heinz_bite_cells   Bite cells / Heinz bodies (example discriminator)
+concept finding   oxidant_temporal   Temporal link to an oxidant exposure (example)
+rel demo_hemolytic discriminates hemoglobinuria    0.9
+rel demo_hemolytic discriminates heinz_bite_cells  0.9
+rel demo_hemolytic discriminates oxidant_temporal  0.9
+# confirmatory
+concept test      g6pd_assay_low     Low enzyme activity on assay (example confirmatory)
+rel demo_hemolytic requires      g6pd_assay_low   1.0
+# gene + context
+rel demo_hemolytic caused_by       gene_demo_a          1.0
+rel demo_hemolytic associated_with family_history_rcd   0.4
+
+# timeline trap: a NORMAL result read during reticulocytosis is unreliable.
+# The window (14) is an illustrative reasoning window, not a clinical constant.
+concept test      g6pd_assay_normal  Normal / near-normal assay result (example)
+concept finding   reticulocytosis    Reticulocytosis (example confounding state)
+rel g6pd_assay_normal confounded_by reticulocytosis 14
+
+# triggers to avoid (example)
+concept trigger   primaquine         Example oxidant agent
+rel demo_hemolytic triggered_by  primaquine
+
+# management (dose-free, stored as knowledge only)
+concept treatment demo_trigger_avoid  Avoid the offending trigger (example)
+concept treatment demo_supportive     Supportive care (example)
+rel demo_hemolytic treated_by    demo_trigger_avoid
+rel demo_hemolytic treated_by    demo_supportive
+
+
+# =============================================================================
+# DEMO CYANOTIC DISORDER — fictional
+# =============================================================================
+concept disease   demo_cyanotic    Illustrative cyanotic disorder (SYNTHETIC EXAMPLE)
+concept gene      gene_demo_b      Example gene B
+
+rel demo_cyanotic has_finding    fatigue     0.2
+# discriminating
+concept finding   cyanosis           Cyanosis (example discriminator)
+rel demo_cyanotic discriminates cyanosis    0.9
+# confirmatory
+concept test      methb_level        Elevated marker level (example confirmatory)
+rel demo_cyanotic requires      methb_level  1.0
+# gene
+rel demo_cyanotic caused_by       gene_demo_b   1.0
+# management (example)
+concept treatment demo_antidote      Example antidote
+rel demo_cyanotic treated_by    demo_antidote

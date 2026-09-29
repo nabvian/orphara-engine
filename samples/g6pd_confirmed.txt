@@ -1,0 +1,8 @@
+Clinical Note
+Date: 4 May 2026
+Patient: (synthetic) 28-year-old man.
+Presented with jaundice and dark urine.
+Peripheral blood film shows bite cells and Heinz bodies.
+Haemolysis following oxidant exposure.
+Affected maternal uncle (known family history).
+G6PD assay low, confirming the diagnosis.

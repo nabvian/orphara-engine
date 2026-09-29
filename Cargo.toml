@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = ["crates/core-types", "crates/reasoning", "crates/dsd", "crates/dsdc", "crates/gnn", "crates/engine", "crates/caretrace", "crates/concept-adapter", "crates/temporal", "crates/poc-server"]
+
+[workspace.package]
+edition = "2021"
+license = "AGPL-3.0-only"
+rust-version = "1.80"

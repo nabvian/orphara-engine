@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORPHARA · Rare Disease Explainable Decision Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#221033; --ink-soft:#574468; --ink-faint:#8b7aa0;
+  --pur:#9127b8; --pur-deep:#6c1f9c; --pur-bright:#b249d6; --pur-tint:#f5e9fb; --pur-tint2:#faf4fd;
+  --pink:#d63a97; --pink-bright:#f45fb0; --pink-tint:#fdeaf5;
+  --blue:#2563b8; --blue-deep:#1c4d92; --blue-bright:#3b82e0; --blue-tint:#e8f0fc;
+  --green:#157a4a; --green-bright:#22a366; --green-tint:#e7f4ec;
+  --paper:#f4ecfa; --surface:#ffffff; --surface-2:#faf6fd;
+  --line:#ecdff5; --line-soft:#f3ebf9;
+  --stop:#d61f61; --stop-tint:#fdeaf1;
+  --review:#c2620a; --review-tint:#fdf2e6;
+  --path:#8a1fb0; --path-tint:#f5e9fb;
+  --ok:#157a4a; --ok-tint:#e7f4ec;
+  --scope:#5a6b85; --scope-tint:#eef1f6;
+  --shadow:0 1px 2px rgba(34,16,51,.04),0 6px 22px rgba(34,16,51,.07);
+  --radius:14px; --radius-sm:9px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'IBM Plex Sans',system-ui,sans-serif;color:var(--ink);
+  background:
+    radial-gradient(1200px 520px at 84% -8%, #f7dcef 0%, rgba(247,220,239,0) 60%),
+    radial-gradient(900px 480px at -6% 6%, #ecdcfb 0%, rgba(236,220,251,0) 55%),
+    var(--paper);
+  background-attachment:fixed;-webkit-font-smoothing:antialiased;line-height:1.5;
+}
+.mono{font-family:'IBM Plex Mono',monospace}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+::selection{background:#cfe0f7}
+
+.topbar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topbar-inner{max-width:1480px;margin:0 auto;padding:14px 26px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;align-items:center;gap:13px;flex-shrink:0}
+.logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;
+  background:linear-gradient(150deg,var(--blue-bright),var(--blue-deep));box-shadow:0 4px 15px rgba(37,99,184,.40);position:relative;overflow:hidden}
+.logo svg{width:24px;height:24px}
+.logo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.30),transparent 45%)}
+.brand h1{font-size:21px;font-weight:800;letter-spacing:.05em;color:var(--blue-deep);line-height:1}
+.brand .sub{font-size:11px;color:var(--ink-faint);font-weight:600;letter-spacing:.05em;margin-top:3px}
+.brand .sub b{color:var(--pink);font-weight:700}
+.flex1{flex:1}
+.engine-tag{display:inline-flex;align-items:center;gap:7px;white-space:nowrap;font-size:11px;font-weight:600;letter-spacing:.02em;
+  color:var(--blue-deep);background:var(--blue-tint);border:1px solid #cfe0f7;padding:7px 13px;border-radius:999px}
+.engine-tag .dot{width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.hero-accent{height:3px;background:linear-gradient(90deg,var(--pink-bright),var(--blue-bright) 38%,var(--green-bright) 66%,var(--pur-bright))}
+.safety-pill{display:flex;align-items:center;gap:8px;font-size:11.5px;font-weight:600;letter-spacing:.02em;
+  color:var(--review);background:var(--review-tint);border:1px solid #f3d9b8;padding:7px 13px;border-radius:999px}
+.safety-pill .dot{width:7px;height:7px;border-radius:50%;background:var(--review);animation:pulse 2.4s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+.pipeline{max-width:1480px;margin:0 auto;padding:11px 26px 0;display:flex;align-items:center;gap:0;overflow-x:auto}
+.pstep{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.pstep .num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:600;
+  background:var(--surface);border:1.5px solid var(--line);color:var(--ink-faint);transition:.35s}
+.pstep .ptxt{font-size:11.5px;font-weight:600;letter-spacing:.05em;color:var(--ink-faint);transition:.35s;text-transform:uppercase}
+.pstep.done .num{background:var(--ok);border-color:var(--ok);color:#fff}
+.pstep.done .ptxt{color:var(--ok)}
+.pline{width:36px;height:1.5px;background:var(--line);margin:0 10px;flex-shrink:0;transition:.35s}
+.pstep.done + .pline{background:var(--ok)}
+
+.wrap{max-width:1480px;margin:0 auto;padding:20px 26px 60px;display:grid;grid-template-columns:minmax(370px,440px) 1fr;gap:22px;align-items:start}
+@media(max-width:1080px){.wrap{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:22px}
+.panel-head{padding:16px 20px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;gap:10px}
+.panel-head .ico{width:30px;height:30px;border-radius:8px;background:var(--blue-tint);display:grid;place-items:center;color:var(--blue-deep);font-size:15px}
+.panel-head .ico.pur{background:var(--pur-tint);color:var(--pur-deep)}
+.panel-head .ico.green{background:var(--green-tint);color:var(--green)}
+.panel-head .ico.pink{background:var(--pink-tint);color:var(--pink)}
+.panel-head h2{font-size:14.5px;font-weight:700;letter-spacing:.01em}
+.panel-head .h2sub{font-size:11px;color:var(--ink-faint);font-weight:500;margin-top:1px}
+.panel-body{padding:20px}
+
+textarea.note{width:100%;min-height:210px;font-family:'IBM Plex Mono',monospace;font-size:12px;line-height:1.6;
+  color:var(--ink);background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:13px;resize:vertical}
+textarea.note:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
+.filedrop{display:flex;align-items:center;gap:10px;padding:16px;border:1.5px dashed #cfe0f7;border-radius:10px;
+  background:var(--blue-tint);cursor:pointer;transition:.16s}
+.filedrop:hover{border-color:var(--blue-bright);background:#dfeafb}
+.filedrop input[type=file]{font-size:11.5px;color:var(--ink-soft);max-width:100%}
+.filedrop span{font-size:12px;color:var(--blue-deep);font-weight:600}
+.hint{font-size:11px;color:var(--ink-faint);margin-top:8px;line-height:1.5}
+.hint b{color:var(--ink-soft)}
+
+.section-lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--blue-deep);margin:0 0 9px;display:flex;align-items:center;gap:7px}
+.section-lbl::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--pink)}
+.demo-grid{display:grid;grid-template-columns:1fr;gap:7px;margin-bottom:18px}
+.demo-card{text-align:left;padding:10px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);transition:.16s;display:flex;gap:10px;align-items:center;width:100%}
+.demo-card:hover{border-color:var(--blue-bright);background:var(--blue-tint);transform:translateY(-1px)}
+.demo-card .dc-id{font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;color:#fff;background:var(--blue);border-radius:5px;padding:3px 6px;flex-shrink:0}
+.demo-card .dc-t{font-size:12px;font-weight:600;color:var(--ink);line-height:1.3}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:13px;font-weight:600;padding:10px 16px;border-radius:9px;transition:.16s;letter-spacing:.01em}
+.btn-primary{background:linear-gradient(135deg,var(--blue-bright),var(--blue-deep));color:#fff;box-shadow:0 4px 14px rgba(37,99,184,.34)}
+.btn-primary:hover{box-shadow:0 6px 20px rgba(37,99,184,.46);transform:translateY(-1px)}
+.btn-ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink-soft);font-size:12px;padding:7px 12px}
+.btn-ghost:hover{border-color:var(--pur-bright);color:var(--pur-deep)}
+.btn-block{width:100%;margin-top:6px;padding:13px}
+
+/* results */
+.kpis{display:flex;flex-wrap:wrap;gap:10px}
+.kpi{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:10px;padding:10px 14px;min-width:92px}
+.kpi b{display:block;font-size:20px;font-weight:800;color:var(--blue-deep)}
+.kpi span{color:var(--ink-faint);font-size:11px;font-weight:600;letter-spacing:.03em;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+th{color:var(--ink-faint);font-weight:600;font-size:11px;letter-spacing:.03em;text-transform:uppercase}
+td code,.mono{font-family:'IBM Plex Mono',monospace;font-size:11.5px}
+.prov{color:var(--ink-faint);font-size:11.5px}
+.empty{color:var(--ink-faint);font-style:italic;font-size:12.5px}
+.badge{display:inline-block;padding:2px 10px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.01em}
+.b-StronglySupported,.b-Supported{color:var(--ok);background:var(--ok-tint)}
+.b-Possible,.b-ConflictingEvidence{color:var(--review);background:var(--review-tint)}
+.b-Contradicted{color:var(--stop);background:var(--stop-tint)}
+.b-InsufficientEvidence,.b-Abstain{color:var(--scope);background:var(--scope-tint)}
+.flagbox{border-left:3px solid var(--review);background:var(--review-tint);padding:11px 14px;border-radius:0 9px 9px 0;margin:9px 0;font-size:12.5px;line-height:1.5}
+.flagbox.stop{border-left-color:var(--stop);background:var(--stop-tint)}
+.flagbox b{color:var(--ink)}
+h3.sub-h{font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--pur-deep);margin:16px 0 8px}
+h3.sub-h:first-child{margin-top:0}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-block;padding:3px 10px;border-radius:999px;background:var(--blue-tint);color:var(--blue-deep);font-size:11.5px;font-weight:600;border:1px solid #cfe0f7}
+.chip.absent{background:var(--scope-tint);color:var(--scope);border-color:#d5dbe6}
+.placeholder{color:var(--ink-faint);font-size:13px;text-align:center;padding:40px 20px}
+.disclaimer{max-width:1480px;margin:0 auto;padding:8px 26px;font-size:11.5px;font-weight:600;color:var(--review);
+  background:var(--review-tint);border-top:1px solid #f3d9b8}
+.disclaimer b{color:#8a4a00}
+.disclaimer i{font-weight:600;font-style:italic;color:var(--ink-soft)}
+/* expandable candidate detail */
+details.cand{border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:var(--surface);overflow:hidden}
+details.cand[open]{border-color:var(--blue-bright);box-shadow:0 0 0 3px var(--blue-tint)}
+details.cand>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 14px}
+details.cand>summary::-webkit-details-marker{display:none}
+details.cand>summary .rank{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint)}
+details.cand>summary .cname{font-weight:700;font-size:13.5px}
+details.cand>summary .chev{margin-left:auto;color:var(--ink-faint);transition:.2s}
+details.cand[open]>summary .chev{transform:rotate(90deg)}
+.detail{padding:4px 14px 14px;border-top:1px solid var(--line-soft)}
+.dgroup{margin-top:12px}
+.dgroup .dlbl{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--blue-deep);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.dgroup.avoid .dlbl{color:var(--stop)}
+.dgroup.mgmt .dlbl{color:var(--green)}
+.dgroup.conf .dlbl{color:var(--pur-deep)}
+.chip.ok{background:var(--green-tint);color:var(--green);border-color:#bfe4cf}
+.chip.avoid{background:var(--stop-tint);color:var(--stop);border-color:#f4c6d5}
+</style>
+</head>
+<body>
+<div class="hero-accent"></div>
+<div class="topbar"><div class="topbar-inner">
+  <div class="brand">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3c-3.5 4-6 6.8-6 10a6 6 0 0 0 12 0c0-3.2-2.5-6-6-10z" fill="#fff" opacity=".92"/><circle cx="12" cy="13.5" r="2.4" fill="#9127b8"/></svg></div>
+    <div>
+      <h1>ORPHARA</h1>
+      <div class="sub">Rare Disease · <b>Red Cell Enzyme</b></div>
+    </div>
+  </div>
+  <div class="flex1"></div>
+  <div class="engine-tag"><span class="dot"></span>Blind Core + DSD · Hybrid GNN + Rule</div>
+  <div class="safety-pill"><span class="dot"></span>NOT CLINICALLY VALIDATED</div>
+</div>
+<div class="disclaimer">⚠ Research prototype — <b>not clinically validated</b>. Synthetic data only. Not a medical device; not for clinical use, diagnosis, or treatment decisions. Decision <i>support</i>, never a decision.</div>
+<div class="pipeline" id="pipeline">
+  <div class="pstep"><span class="num">1</span><span class="ptxt">Ingest</span></div><span class="pline"></span>
+  <div class="pstep"><span class="num">2</span><span class="ptxt">Extract</span></div><span class="pline"></span>
+  <div class="pstep"><span class="num">3</span><span class="ptxt">Adapt</span></div><span class="pline"></span>
+  <div class="pstep"><span class="num">4</span><span class="ptxt">Reason</span></div><span class="pline"></span>
+  <div class="pstep"><span class="num">5</span><span class="ptxt">Timeline</span></div>
+</div>
+</div>
+
+<div class="wrap">
+  <div>
+    <div class="panel">
+      <div class="panel-head"><span class="ico">📝</span><div><h2>Patient inputs</h2><div class="h2sub">Report(s) + doctor's note · synthetic only</div></div></div>
+      <div class="panel-body">
+        <form method="POST" action="/analyze" enctype="multipart/form-data">
+          <div class="section-lbl">1 · Upload report(s)</div>
+          <label class="filedrop">
+            <input type="file" name="report" multiple accept=".pdf,.txt,.png,.jpg,.jpeg" onchange="showFiles(this)">
+            <span id="filelabel">Choose lab / enzyme reports — PDF, text or image (biomarkers)</span>
+          </label>
+
+          <div class="section-lbl" style="margin-top:18px">2 · Doctor's note (free text · symptoms)</div>
+          <div class="demo-grid">
+            <button type="button" class="demo-card" onclick="load('report_note')"><span class="dc-id">R+TXT</span><span class="dc-t">Enzyme report + note — biomarker &amp; symptoms</span></button>
+            <button type="button" class="demo-card" onclick="load('g6pd_confirmed')"><span class="dc-id">G6PD</span><span class="dc-t">Confirmed — assay low</span></button>
+            <button type="button" class="demo-card" onclick="load('g6pd_trap')"><span class="dc-id">G6PD</span><span class="dc-t">Assay-timing trap — normal in reticulocytosis</span></button>
+            <button type="button" class="demo-card" onclick="load('pk')"><span class="dc-id">PK</span><span class="dc-t">Pyruvate kinase deficiency</span></button>
+            <button type="button" class="demo-card" onclick="load('methb')"><span class="dc-id">MetHb</span><span class="dc-t">Autosomal-recessive methaemoglobinaemia</span></button>
+            <button type="button" class="demo-card" onclick="load('audit')"><span class="dc-id">AUDIT</span><span class="dc-t">Multi-report — conflict + gap</span></button>
+          </div>
+          <textarea id="input" class="note" name="note" placeholder="Type or paste the clinical note (symptoms, history, exam).
+You can also paste report text here; separate multiple documents with  === filename.txt ===">{{INPUT}}</textarea>
+          <p class="hint">Upload report files above <b>and/or</b> type a note. Reports contribute <b>biomarkers</b>; the note contributes <b>symptoms</b>. Separate multiple pasted documents with <b>=== filename.txt ===</b>.</p>
+          <button class="btn btn-primary btn-block" type="submit">Analyze</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="results">{{RESULTS}}</div>
+</div>
+
+<script>
+const SAMPLES = {
+  report_note: `=== enzyme_report.txt ===
+Red Cell Enzyme Assay
+Report Date: 6 May 2026
+G6PD activity      2.1 U/g       6.0 - 18.0
+=== clinical_note.txt ===
+Clinical Note
+Date: 6 May 2026
+Jaundice and dark urine.
+Blood film shows bite cells and Heinz bodies.`,
+  g6pd_confirmed: `Clinical Note
+Date: 4 May 2026
+Patient: (synthetic) 28-year-old man.
+Presented with jaundice and dark urine.
+Peripheral blood film shows bite cells and Heinz bodies.
+Haemolysis following oxidant exposure.
+Affected maternal uncle (known family history).
+G6PD assay low, confirming the diagnosis.`,
+  g6pd_trap: `Clinical Note
+Date: 4 May 2026
+Patient: (synthetic) 28-year-old man.
+Jaundice and dark urine.
+Blood film: bite cells and Heinz bodies.
+Reticulocytosis noted on the film.
+G6PD assay normal.`,
+  pk: `Clinical Note
+Date: 12 June 2026
+Patient: (synthetic) 6-year-old child of consanguineous parents.
+Chronic jaundice with splenomegaly.
+Pigment gallstones seen on ultrasound.
+DAT-negative, non-spherocytic smear.
+Aplastic crisis with parvovirus B19.
+Low pyruvate kinase activity on the enzyme assay.
+Biallelic pathogenic PKLR variants on sequencing.`,
+  methb: `Clinical Note
+Date: 2 March 2026
+Patient: (synthetic) neonate.
+Central cyanosis with blue lips.
+Cyanosis unresponsive to oxygen; chocolate-brown blood on sampling.
+Elevated methaemoglobin on co-oximetry.
+Decreased cytochrome b5 reductase with biallelic CYB5R3.`,
+  audit: `=== cbc_visit1.txt ===
+Complete Blood Count
+Report Date: 4 May 2026
+Hemoglobin        9.2 g/dL      13.0-17.0
+MCV               70 fL         80-100
+Ferritin          6 ng/mL       30-300
+=== cbc_visit2.txt ===
+Complete Blood Count
+Report Date: 4 May 2026
+Hemoglobin        11.5 g/dL     13.0-17.0
+=== discharge_summary.txt ===
+Discharge Summary
+Discharge Date: 25 May 2026
+Impression:
+Iron deficiency anaemia.
+Thalassaemia trait excluded.`,
+};
+function load(k){ document.getElementById('input').value = SAMPLES[k] || ''; document.getElementById('input').focus(); window.scrollTo({top:0,behavior:'smooth'}); }
+function showFiles(inp){ const n=inp.files.length; document.getElementById('filelabel').textContent = n ? (n+' file(s) selected: '+Array.from(inp.files).map(f=>f.name).join(', ')) : 'Choose lab / enzyme reports — PDF, text or image (biomarkers)'; }
+// Light up the pipeline once results are present.
+if (document.getElementById('results') && document.getElementById('results').textContent.trim().length > 0) {
+  document.querySelectorAll('#pipeline .pstep').forEach(s => s.classList.add('done'));
+}
+</script>
+</body>
+</html>
