@@ -31,18 +31,37 @@ toward:
 That is the outcome ORPHARA is designed to give — today for a small proof set,
 in future across a full rare-disease knowledge base.
 
-## Scope: where it is now, where it is going
+## Scope: the proof, the year, and the whole inventory
 
-- **Target now: the rare-disease Hematology family — 220+ disorders.** The exact
-  count is still firming up as the full family and sub-family classification is
-  completed, and it will grow.
-- **This proof build covers 3 disorders.** The current knowledge base holds
-  three red-cell enzyme disorders (G6PD deficiency, pyruvate kinase deficiency,
-  and autosomal-recessive methaemoglobinaemia), end to end. Three is not the
-  ambition — it is the **proof** that the whole pipeline works: real reports and
-  a real note in, a full, sourced, structured analysis out.
-- **The architecture is built so growth is knowledge work, not engine work.** The
-  engine here never changes as diseases are added; only the knowledge base does.
+Three horizons, smallest to largest:
+
+- **This proof build covers 3 disorders.** The current knowledge base holds three
+  red-cell enzyme disorders (G6PD deficiency, pyruvate kinase deficiency, and
+  autosomal-recessive methaemoglobinaemia), end to end. Three is not the ambition
+  — it is the **proof** that the whole pipeline works: real reports and a real
+  note in, a full, sourced, structured analysis out.
+- **Year one: the rare-disease Hematology family.** The plan for the coming year
+  is to build out the whole Hematology family — **230 clinical entities** in the
+  Orphanet Knowledge Base (release 2025-12-09), and still growing as the family
+  and sub-family classification is completed (6,258 entities in the inventory are
+  not yet family-classified, so some will resolve into Hematology).
+- **The whole inventory, ultimately: every rare disease.** The end goal is to
+  cover the full Orphanet rare-disease inventory. That inventory, in the release
+  above, is **11,456 clinical entities**, of which **10,288 are active** (1,024
+  obsolete and 144 not-rare-in-Europe are excluded). Orphanet counts disorders,
+  disease groups and subtypes separately; ORPHARA resolves each entity's level as
+  part of the build, so the disorder-level total is being established rather than
+  guessed.
+
+Counts are from the Orphanet Knowledge Base, release 2025-12-09, used under
+CC BY 4.0 (data © Orphanet / INSERM). They are a moving target — Orphanet updates
+the inventory, and ORPHARA's own classification refines the family and level
+figures as the work proceeds.
+
+**The architecture is built so growth is knowledge work, not engine work.** The
+engine in this repository does not change as diseases are added; only the
+knowledge base does. That is exactly why the engine can be open now while the
+knowledge is still being built.
 
 ## What is in this repository, and what is not
 
@@ -55,9 +74,9 @@ This is an **open-core** project.
   with two fictional disorders, so the engine builds, tests and demos end to end.
   It is **not medical knowledge** and must not be read as clinical guidance.
 - **Not here (private for now):** the real disease knowledge base — the sourced,
-  reviewed reasoning models (the 3-disorder proof, and the 220+ hematology work
-  underway). The engine does not need it to run; it reads whatever model you give
-  it.
+  reviewed reasoning models (the 3-disorder proof, and the Hematology family work
+  underway — see Scope). The engine does not need it to run; it reads whatever
+  model you give it.
 
 ### Why the knowledge layer is not open yet — and will be
 
