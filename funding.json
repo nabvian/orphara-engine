@@ -41,12 +41,42 @@
     ],
     "plans": [
       {
-        "guid": "knowledge-year",
+        "guid": "m1-family-map",
         "status": "active",
-        "name": "One year of knowledge engineering",
-        "description": "Fund a year of building and validating the disease models toward full hematology coverage, after which the knowledge opens as well.",
-        "amount": 30000,
-        "currency": "USD",
+        "name": "Milestone 1 — Hematology family map and engine readiness (months 1-3)",
+        "description": "Resolve the ~230 Hematology clinical entities in the Orphanet inventory into families and sub-families, and extend the open engine where the family needs it (group and subtype handling). Deliverables: a published family/sub-family map, and engine updates on the public repository with passing tests.",
+        "amount": 300000,
+        "currency": "INR",
+        "frequency": "one-time",
+        "channels": ["direct"]
+      },
+      {
+        "guid": "m2-first-subfamilies",
+        "status": "active",
+        "name": "Milestone 2 — First sub-families modelled end to end (months 4-6)",
+        "description": "Author sourced dossiers and compiled models for the first Hematology sub-families (for example red-cell membrane and haemoglobin disorders), each passing the engine's confirmatory-gating and provenance checks. Deliverable: a defined batch of disorders modelled end to end, with a progress report listing counts and sources.",
+        "amount": 300000,
+        "currency": "INR",
+        "frequency": "one-time",
+        "channels": ["direct"]
+      },
+      {
+        "guid": "m3-coverage-differentials",
+        "status": "active",
+        "name": "Milestone 3 — Coverage expansion and differentials (months 7-9)",
+        "description": "Extend to further sub-families (coagulation, bone-marrow failure and related) and add cross-disorder differential reasoning. Deliverable: cumulative disorder coverage reported, with engine improvements released publicly.",
+        "amount": 300000,
+        "currency": "INR",
+        "frequency": "one-time",
+        "channels": ["direct"]
+      },
+      {
+        "guid": "m4-validation-package",
+        "status": "active",
+        "name": "Milestone 4 — Full-family coverage and validation package (months 10-12)",
+        "description": "Complete the Hematology family as far as the year allows toward full coverage, and assemble a clinician-review package (a synthetic case suite and per-disorder review packets), a public engine release, and a written clinical-validation plan. Deliverable: cumulative coverage, the review package, and the validation plan. After clinical validation the knowledge base opens as well.",
+        "amount": 300000,
+        "currency": "INR",
         "frequency": "one-time",
         "channels": ["direct"]
       },
@@ -54,9 +84,9 @@
         "guid": "goodwill",
         "status": "active",
         "name": "Goodwill",
-        "description": "Any amount, one-time, to support the project.",
+        "description": "Any amount, one-time, to support the project outside the milestone plan.",
         "amount": 0,
-        "currency": "USD",
+        "currency": "INR",
         "frequency": "one-time",
         "channels": ["direct"]
       }
