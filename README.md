@@ -1,81 +1,95 @@
 # ORPHARA engine
 
 A disease-blind reasoning engine for rare-disease decision *support*, written in
-Rust. You give it a patient's extracted facts — findings from a doctor's note,
-biomarkers from a report — and a compiled knowledge model, and it returns a
-ranked, explainable shortlist of candidate disorders: what each one would need to
-be confirmed, which findings point to it, and why. It does not make the decision.
-A clinician does.
-
-The point of this repository is the **engine**, not the medicine. The engine
-knows nothing about any disease. All medical knowledge lives *outside* the code,
-as a compiled model the engine reads through one frozen interface. Swap the model
-and the same engine reasons about something else, with no code change. That
-separation is the whole design, and it is what makes the engine safe to open
-while the knowledge is still being built and reviewed.
+Rust. This repository is the **open engine**. The medical knowledge it reasons
+over lives outside it, and is described below.
 
 Author: Koushik Das.
 
+## What ORPHARA is
+
+ORPHARA is decision support for rare disease. The full picture it is built
+toward:
+
+1. **You give it the patient.** Upload the patient's history — lab reports,
+   discharge summaries, prior results (PDF or text) — and write a short
+   free-text clinical note.
+2. **It extracts the structured facts.** Biomarkers (with the direction taken
+   from each report's own printed reference range, never a guessed cutoff),
+   findings, medications, dates — each carried back to the exact source text it
+   came from. Conflicting or changed values across documents are surfaced, not
+   silently merged.
+3. **It reasons.** Against a curated, sourced knowledge base, it produces a
+   **full structured analysis**: a ranked shortlist of candidate disorders, and
+   for each one — the findings that point to it, the confirmatory tests still
+   needed, the triggers to avoid, dose-free management, and inheritance. A
+   timeline pass flags results whose reliability depends on when they were taken.
+4. **It hands the decision back.** Every line traces to a source. Nothing is
+   asserted without its confirmatory evidence; where that evidence is missing,
+   ORPHARA says what is missing rather than guessing. The clinician decides.
+
+That is the outcome ORPHARA is designed to give — today for a small proof set,
+in future across a full rare-disease knowledge base.
+
+## Scope: where it is now, where it is going
+
+- **Target now: the rare-disease Hematology family — 220+ disorders.** The exact
+  count is still firming up as the full family and sub-family classification is
+  completed, and it will grow.
+- **This proof build covers 3 disorders.** The current knowledge base holds
+  three red-cell enzyme disorders (G6PD deficiency, pyruvate kinase deficiency,
+  and autosomal-recessive methaemoglobinaemia), end to end. Three is not the
+  ambition — it is the **proof** that the whole pipeline works: real reports and
+  a real note in, a full, sourced, structured analysis out.
+- **The architecture is built so growth is knowledge work, not engine work.** The
+  engine here never changes as diseases are added; only the knowledge base does.
+
+## What is in this repository, and what is not
+
+This is an **open-core** project.
+
+- **Open (here):** the **engine** — the disease-blind reasoning core, the
+  knowledge format and compiler, the extractor, the concept adapter, the timeline
+  pass, and a local web UI. Licensed under the GNU AGPL-3.0.
+- **Bundled with it:** a **synthetic, made-up example model** (`knowledge/example/`)
+  with two fictional disorders, so the engine builds, tests and demos end to end.
+  It is **not medical knowledge** and must not be read as clinical guidance.
+- **Not here (private for now):** the real disease knowledge base — the sourced,
+  reviewed reasoning models (the 3-disorder proof, and the 220+ hematology work
+  underway). The engine does not need it to run; it reads whatever model you give
+  it.
+
+### Why the knowledge layer is not open yet — and will be
+
+The knowledge base is **not clinically validated yet**. Open-sourcing an
+unvalidated clinical knowledge base invites it to be used as if it were finished,
+which is exactly what a decision-support tool must not allow before review.
+**After clinical validation, the full suite — knowledge included — will be
+open-sourced.** Open is the destination; the private phase is about getting there
+safely. The engine is open now because the engine is finished and disease-blind:
+opening it carries none of that risk.
+
 ## Status, honestly
 
-This is research software. It is **not clinically validated**, it is **not a
-medical device**, and nothing here should be used for real diagnosis or
-treatment. The model that ships with it (`knowledge/example/`) is a **synthetic,
-made-up example** with two fictional disorders — it exists only so the engine can
-build, test and demo end to end. It is not medical knowledge. Do not read it as
-clinical guidance.
+Research software. **Not clinically validated, not a medical device.** Do not use
+it for real diagnosis or treatment. Every example here uses synthetic data.
 
-## Open engine, separate knowledge
+## Quick start
 
-This is the open half of an open-core project:
-
-- **The engine is open**, here, under the GNU AGPL-3.0. Read it, run it, check
-  it, build on it.
-- **The disease knowledge is separate and, for now, private.** The real models —
-  the sourced, reviewed reasoning graphs — are a large, ongoing body of work. I'm
-  keeping them under a restricted licence while they're built and validated, and
-  intend to open them too once that validation is done. The engine never needs
-  them to run: it ships with the synthetic example, and reads any model you point
-  it at.
-
-So the funding-and-roadmap story is simple: the engine you see is the finished,
-open foundation; the year ahead is knowledge — growing the private models toward
-full hematology coverage — after which the knowledge opens as well.
-
-## What's in here
-
-A small Rust workspace. Each crate does one thing:
-
-- `core-types` — the frozen contract: the `KnowledgeProvider` trait and the graph
-  types. The engine depends only on this, never on a specific disease.
-- `dsd` — the compiled binary knowledge format and its loader/verifier.
-- `dsdc` — the compiler: `.dsdsrc` text → `.dsd` bytes.
-- `reasoning` — the rules layer: matches findings, gates on confirmatory
-  evidence, and classifies each candidate's outcome. This is the safety layer.
-- `gnn` — a small graph model that supplies a *ranking* signal only. It never
-  crosses a rule tier, so it can reorder within a tier but never override the
-  rules.
-- `engine` — ties rules + GNN into one hybrid assessment.
-- `temporal` — a timing pass that flags a result whose reliability depends on
-  when it was taken. Advisory; it never changes the ranking.
-- `caretrace` — the extractor: turns PDFs / text / notes into structured facts,
-  medications and findings, with provenance and a record audit
-  (conflicts / changes / gaps). Optional standard-vocabulary coding.
-- `concept-adapter` — the seam that maps extracted concepts to model nodes and
-  builds the patient graph. Unmapped concepts are quarantined, never invented.
-- `poc-server` — a small local web UI to try the whole pipeline in a browser.
-
-## Build and run
-
-You need Rust 1.80 or newer.
+You need Rust 1.80 or newer ([rustup.rs](https://rustup.rs)).
 
 ```bash
-cargo test --workspace          # everything, green
+cargo test --workspace                              # everything, green
 cargo run -p engine --example example_model_demo    # the pipeline in the terminal
-cargo run -p poc-server         # local web UI on http://127.0.0.1:8794
+cargo run -p concept-adapter --example analyze_note  # a note -> full structured analysis
+cargo run -p poc-server                             # local web UI on http://127.0.0.1:8794
 ```
 
-Nothing phones home; it runs entirely on your machine.
+Nothing phones home; it runs entirely on your machine. A full walkthrough —
+building, using the web UI, uploading a patient history plus a doctor's note, and
+reading the structured analysis — is in [`USAGE.md`](USAGE.md). To try it in the
+browser with no local setup, see the Colab notebook in
+[`notebooks/`](notebooks/orphara_colab.ipynb).
 
 ### Bring your own model
 
@@ -86,26 +100,44 @@ engine over a different compiled model, point it at one — no code change:
 ORPHARA_MODEL=/path/to/your_model.dsdsrc cargo run -p poc-server
 ```
 
+## The crates
+
+- `core-types` — the frozen contract: the `KnowledgeProvider` trait and the graph
+  types. The engine depends only on this, never on a specific disease.
+- `dsd` / `dsdc` — the compiled binary knowledge format, its loader/verifier, and
+  the compiler (`.dsdsrc` text → `.dsd` bytes).
+- `reasoning` — the rules layer: matches findings, gates on confirmatory
+  evidence, classifies each candidate's outcome. The safety layer.
+- `gnn` — a small graph model that supplies a *ranking* signal only; it never
+  crosses a rule tier, so it can reorder within a tier but never override rules.
+- `engine` — ties rules + GNN into one hybrid assessment.
+- `temporal` — an advisory timing pass; it flags but never changes the ranking.
+- `caretrace` — the extractor: PDFs / text / notes → structured facts,
+  medications, findings, with provenance and a record audit (conflicts / changes
+  / gaps). Optional standard-vocabulary coding (LOINC / RxNorm / SNOMED).
+- `concept-adapter` — maps extracted concepts to model nodes and builds the
+  patient graph. Unmapped concepts are quarantined, never invented.
+- `poc-server` — a small local web UI for the whole pipeline.
+
 ## How it stays honest
 
-- **Disease-blind.** The engine reasons over a graph and knows nothing about any
-  specific disease. There is no `check_g6pd()` anywhere, and there never will be —
-  the contract in `core-types` is frozen.
-- **Nothing is guessed.** A concept the adapter can't place is set aside, not
-  invented. A confirmatory test that's missing makes a candidate *Possible* and
-  the engine names what's missing — it never asserts the disorder.
-- **Absent is not unknown.** A documented absence is carried as absent; a fact
-  that simply isn't recorded stays unknown.
-- **Rules gate; the model only ranks.** The learned signal can reorder
-  candidates within a tier, never lift a weaker one over a stronger.
+- **Disease-blind.** No `check_g6pd()` anywhere, and there never will be — the
+  contract in `core-types` is frozen. Adding diseases changes the knowledge, not
+  the code.
+- **Nothing is guessed.** A concept it can't place is set aside, not invented. A
+  missing confirmatory test makes a candidate *Possible*, and the engine names
+  what's missing.
+- **Absent is not unknown.** A documented absence is carried as absent; a fact not
+  recorded stays unknown.
+- **Rules gate; the model only ranks.**
 
 ## Licence
 
-GNU Affero General Public License v3.0 only. See [`LICENSE`](LICENSE). If you run
-a modified version to provide a network service, the AGPL requires you to offer
-that version's source to its users.
+GNU Affero General Public License v3.0 only — see [`LICENSE`](LICENSE). If you run
+a modified version as a network service, the AGPL requires you to offer that
+version's source to its users.
 
 ## Funding and contact
 
-If you'd like to support the work, see [`funding.json`](funding.json). Questions
-or collaboration: Koushik Das, daskoushik@protonmail.ch.
+To support the work, see [`funding.json`](funding.json). Questions or
+collaboration: Koushik Das, daskoushik@protonmail.ch.
