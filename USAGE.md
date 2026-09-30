@@ -152,5 +152,5 @@ terminology module.
 
 ## Feedback
 
-Found something wrong, or something that should be there? Please send it to the
-author (Koushik Das, daskoushik@protonmail.ch).
+Found something wrong, or something that should be there? Please open an issue on
+this repository, or email engikd1993@gmail.com.

@@ -156,7 +156,7 @@ GNU Affero General Public License v3.0 only — see [`LICENSE`](LICENSE). If you
 a modified version as a network service, the AGPL requires you to offer that
 version's source to its users.
 
-## Funding and contact
+## Support and contact
 
 To support the work, see [`funding.json`](funding.json). Questions or
-collaboration: Koushik Das, daskoushik@protonmail.ch.
+collaboration: open an issue on this repository, or email engikd1993@gmail.com.
