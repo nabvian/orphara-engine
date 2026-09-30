@@ -41,11 +41,11 @@
     ],
     "plans": [
       {
-        "guid": "m1-family-map",
+        "guid": "m1-kickoff",
         "status": "active",
-        "name": "Milestone 1 — Hematology family map and engine readiness (months 1-3)",
-        "description": "Resolve the ~230 Hematology clinical entities in the Orphanet inventory into families and sub-families, and extend the open engine where the family needs it (group and subtype handling). Deliverables: a published family/sub-family map, and engine updates on the public repository with passing tests.",
-        "amount": 300000,
+        "name": "Milestone 1 (kickoff) — Hematology family map and engine readiness (month 1)",
+        "description": "A small kickoff tranche, released on an early and concrete deliverable so work can begin. Resolve the ~230 Hematology clinical entities in the Orphanet inventory into families and sub-families (a published classification map), and get the open engine and its public build/CI ready for the family (group and subtype handling). Deliverable: the family/sub-family map and engine-readiness updates on the public repository with passing tests.",
+        "amount": 100000,
         "currency": "INR",
         "frequency": "one-time",
         "channels": ["direct"]
@@ -53,7 +53,7 @@
       {
         "guid": "m2-first-subfamilies",
         "status": "active",
-        "name": "Milestone 2 — First sub-families modelled end to end (months 4-6)",
+        "name": "Milestone 2 — First sub-families modelled end to end (months 2-4)",
         "description": "Author sourced dossiers and compiled models for the first Hematology sub-families (for example red-cell membrane and haemoglobin disorders), each passing the engine's confirmatory-gating and provenance checks. Deliverable: a defined batch of disorders modelled end to end, with a progress report listing counts and sources.",
         "amount": 300000,
         "currency": "INR",
@@ -63,7 +63,7 @@
       {
         "guid": "m3-coverage-differentials",
         "status": "active",
-        "name": "Milestone 3 — Coverage expansion and differentials (months 7-9)",
+        "name": "Milestone 3 — Coverage expansion and differentials (months 5-7)",
         "description": "Extend to further sub-families (coagulation, bone-marrow failure and related) and add cross-disorder differential reasoning. Deliverable: cumulative disorder coverage reported, with engine improvements released publicly.",
         "amount": 300000,
         "currency": "INR",
@@ -71,11 +71,21 @@
         "channels": ["direct"]
       },
       {
-        "guid": "m4-validation-package",
+        "guid": "m4-more-coverage",
         "status": "active",
-        "name": "Milestone 4 — Full-family coverage and validation package (months 10-12)",
+        "name": "Milestone 4 — Further sub-family coverage (months 8-10)",
+        "description": "Continue modelling the remaining Hematology sub-families toward full-family coverage, each disorder passing the engine's confirmatory-gating and provenance checks. Deliverable: cumulative disorder coverage reported, with sources.",
+        "amount": 250000,
+        "currency": "INR",
+        "frequency": "one-time",
+        "channels": ["direct"]
+      },
+      {
+        "guid": "m5-validation-package",
+        "status": "active",
+        "name": "Milestone 5 — Full-family coverage and validation package (months 11-12)",
         "description": "Complete the Hematology family as far as the year allows toward full coverage, and assemble a clinician-review package (a synthetic case suite and per-disorder review packets), a public engine release, and a written clinical-validation plan. Deliverable: cumulative coverage, the review package, and the validation plan. After clinical validation the knowledge base opens as well.",
-        "amount": 300000,
+        "amount": 250000,
         "currency": "INR",
         "frequency": "one-time",
         "channels": ["direct"]
