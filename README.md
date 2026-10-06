@@ -6,6 +6,10 @@ over lives outside it, and is described below.
 
 Author: Koushik Das.
 
+**[Try it in your browser →](https://nabvian.github.io/orphara-engine/)** The open engine, compiled to
+WebAssembly, over the synthetic example model and sample documents. No install;
+nothing leaves the browser tab.
+
 ## What ORPHARA is
 
 ORPHARA is decision support for rare disease. The full picture it is built

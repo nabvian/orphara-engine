@@ -12,6 +12,10 @@ id_ed25519
 
 # Rust build output.
 /target
+/site/web/target
+
+# Built GitHub Pages site (python3 site/build.py).
+/_site
 
 # Compiled models (generated from .dsdsrc; not source).
 *.dsd

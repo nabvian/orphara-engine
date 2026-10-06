@@ -1,0 +1,40 @@
+name: Publish site
+
+# Rebuilds the GitHub Pages demo (site/): the unmodified engine crates compiled
+# to WebAssembly behind site/web, plus the static page, and publishes it to the
+# gh-pages branch.
+on:
+  push:
+    branches: [main]
+    paths: ["crates/**", "knowledge/example/**", "samples/**", "site/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Rust toolchain with the wasm target
+        run: |
+          rustup toolchain install stable --profile minimal --target wasm32-unknown-unknown
+          rustup default stable
+      - name: Test the bridge against the samples
+        run: cargo test --manifest-path site/web/Cargo.toml
+      - name: Build site
+        run: python3 site/build.py
+      - name: Publish to gh-pages
+        run: |
+          cd _site
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Publish site from ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" gh-pages

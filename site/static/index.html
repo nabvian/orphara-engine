@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORPHARA — rare-disease decision support that names what is missing</title>
+<meta name="description" content="Run the open ORPHARA engine in your browser: synthetic patient documents in, a sourced, structured analysis out — ranked candidates, the confirmatory tests still needed, a record audit and timeline flags. Research software, not a medical device.">
+<meta property="og:title" content="ORPHARA — a disease-blind reasoning engine for rare-disease decision support">
+<meta property="og:description" content="Patient documents in. A ranked, sourced analysis out, and a plain statement of what is still missing. Runs in your browser.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234b2f7f'/%3E%3Ccircle cx='11' cy='11' r='3.2' fill='%23d9c8ff'/%3E%3Ccircle cx='11' cy='21' r='3.2' fill='%23d9c8ff'/%3E%3Ccircle cx='22' cy='16' r='4' fill='white'/%3E%3Cpath d='M13.5 12.2 19 15M13.5 19.8 19 17' stroke='%23d9c8ff' stroke-width='1.6'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="notice-bar" role="note"><strong>Research software.</strong> Not clinically validated, not a medical device. The model on this page is a synthetic, made-up example and every document is synthetic. Do not enter real patient data.</div>
+<header class="topbar">
+  <div class="wrap topbar-inner">
+    <a class="brand" href="#top"><i aria-hidden="true"></i>ORPHARA</a>
+    <nav aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#playground">Playground</a>
+      <a href="#knowledge">Knowledge model</a>
+      <a href="#honest">Safeguards</a>
+      <a href="#scope">Scope</a>
+      <a href="#roadmap">Roadmap</a>
+      <a href="https://github.com/nabvian/orphara-engine">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Rare-disease decision support · open engine, written in Rust</p>
+      <h1>A ranked shortlist with its reasons, and a plain statement of what is missing</h1>
+      <p class="lede">Give ORPHARA a patient's reports and a short clinical note. It extracts the facts with their sources, reasons over a curated knowledge model, and hands the decision back: candidate disorders, the findings that point to each, the confirmatory tests <strong>still needed</strong>, and timing caveats. Every line traces to a source. The clinician decides.</p>
+      <div class="hero-actions">
+        <a class="button" href="#playground">Run the engine in your browser</a>
+        <a class="button ghost" href="https://github.com/nabvian/orphara-engine">Source on GitHub</a>
+      </div>
+      <p class="runtime" id="runtime" role="status" aria-live="polite"><span class="dot"></span><span id="runtime-text">Loading the engine (WebAssembly)…</span></p>
+    </div>
+    <ol class="hero-flow" aria-label="What ORPHARA does">
+      <li><b>1 · You give it the patient</b><span>Lab reports, discharge summaries and a free-text note, as PDF or text.</span></li>
+      <li><b>2 · It extracts the facts</b><span>Biomarkers with direction from each report's own printed reference range, findings, medications and dates, each tied to its source text.</span></li>
+      <li><b>3 · It reasons</b><span>Rules gate on confirmatory evidence; a small graph model only ranks within a tier; a timeline pass flags results whose timing makes them unreliable.</span></li>
+      <li><b>4 · It hands the decision back</b><span>Where evidence is missing, it says what is missing instead of guessing.</span></li>
+    </ol>
+  </div>
+  <div class="wrap stats" id="stats"></div>
+</section>
+
+<section id="how" class="band">
+  <div class="wrap">
+    <p class="eyebrow">Architecture</p>
+    <h2>The engine is disease-blind; the medicine is data</h2>
+    <p class="section-copy">No <code>check_g6pd()</code> anywhere, and there never will be. The engine reasons only through a frozen <code>KnowledgeProvider</code> contract; what each disease means lives in a compiled knowledge model. Adding a disease changes the model, never the code, which is why the engine can be open while the knowledge is still being built.</p>
+    <div class="flow" id="flow" aria-label="Pipeline crates"></div>
+  </div>
+</section>
+
+<section id="playground">
+  <div class="wrap">
+    <p class="eyebrow">Interactive · the real engine, compiled to WebAssembly</p>
+    <h2>Playground</h2>
+    <p class="section-copy">Pick a synthetic case, edit it, or add your own text or PDF files. Separate several documents with a header line such as <code>=== cbc.txt ===</code>. The analysis runs the unmodified engine crates, in the same order as the project's local web UI, entirely in this tab: nothing is uploaded anywhere.</p>
+    <div class="presets" id="presets" role="tablist" aria-label="Synthetic cases"></div>
+    <p class="preset-point" id="preset-point"></p>
+    <p class="muted small try-pdf">Try a PDF: download the <a href="samples/enzyme_report_synthetic.pdf" download>synthetic enzyme report</a>, pick <b>Confirmatory test missing</b>, then add the PDF with <b>Add PDF or text files</b>.</p>
+    <div class="play">
+      <div class="editor card">
+        <div class="editor-head"><span>Documents · synthetic</span><span class="kbd">Ctrl/⌘ + Enter to analyze</span></div>
+        <textarea id="docs" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Patient documents"></textarea>
+        <div class="files" id="files" aria-live="polite"></div>
+        <div class="editor-actions">
+          <button type="button" class="button" id="analyze" disabled>Analyze</button>
+          <label class="button ghost file-button">Add PDF or text files<input type="file" id="file-input" multiple accept=".pdf,.txt"></label>
+        </div>
+      </div>
+      <div class="output" id="output">
+        <div class="card empty-state"><p class="muted">Pick a case or press Analyze to see the extracted facts, the record audit, the ranked candidates and any timeline flags.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="knowledge" class="band">
+  <div class="wrap">
+    <p class="eyebrow">Change the knowledge, not the code</p>
+    <h2>The knowledge model, editable</h2>
+    <p class="section-copy">This is the bundled <strong>synthetic</strong> example model: two fictional disorders that exercise every relationship the engine understands. It is not medical knowledge. Edit it and recompile; the same engine reasons over your version, and the playground re-runs against it. The real, sourced knowledge base is private until it is clinically validated.</p>
+    <div class="model-grid">
+      <div class="editor card">
+        <div class="editor-head"><span>example_disorder.dsdsrc</span><span id="model-status" class="kbd"></span></div>
+        <textarea id="model-src" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Knowledge model source"></textarea>
+        <div class="editor-actions">
+          <button type="button" class="button" id="compile" disabled>Compile and re-run</button>
+          <button type="button" class="button ghost" id="model-reset">Reset model</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Compiled graph</h3>
+        <p class="muted small" id="model-summary"></p>
+        <div id="model-graph" class="model-graph"></div>
+        <details class="table-view"><summary>Table view</summary><div id="model-table"></div></details>
+        <div class="try-box">
+          <p><b>Try it.</b> Add a second required test to the haemolytic disorder. The fully documented case then drops from StronglySupported to Possible, and the engine names the new test as still needed. Not one line of engine code changes.</p>
+<pre class="block small-block"><code>concept test reticulocyte_count Reticulocyte count (example)
+rel demo_hemolytic requires reticulocyte_count 1.0</code></pre>
+          <button type="button" class="button ghost" id="model-try" disabled>Add these lines and re-run</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="honest">
+  <div class="wrap">
+    <p class="eyebrow">How it stays honest</p>
+    <h2>Four rules the engine is built to keep</h2>
+    <div class="rules">
+      <article class="rule"><b>Disease-blind</b><p>The contract in <code>core-types</code> is frozen and standard-library only. Reasoning crates never name a disease; adding one changes the knowledge, not the code.</p></article>
+      <article class="rule"><b>Nothing is guessed</b><p>A concept the model cannot place is quarantined and shown, never invented. A missing confirmatory test makes a candidate <em>Possible</em>, and the engine names what is missing.</p></article>
+      <article class="rule"><b>Absent is not unknown</b><p>A documented absence is carried as absent; a fact nobody recorded stays unknown. Collapsing the two would manufacture false contradictions.</p></article>
+      <article class="rule"><b>Rules gate; the model only ranks</b><p>Deterministic rules decide acceptance and abstention. The graph model can reorder candidates within a tier but never move one across a tier.</p></article>
+    </div>
+    <div class="card outcomes">
+      <h3>Outcome labels</h3>
+      <p class="muted small">None of these is a diagnosis. They are an ordering with the reasons attached.</p>
+      <div id="outcome-legend" class="legend-grid"></div>
+    </div>
+  </div>
+</section>
+
+<section id="scope" class="band">
+  <div class="wrap">
+    <p class="eyebrow">Scope · from the proof to the whole inventory</p>
+    <h2>Three horizons, smallest to largest</h2>
+    <p class="section-copy">Growth is knowledge work, not engine work: the engine in this repository does not change as diseases are added.</p>
+    <div class="horizons">
+      <article class="horizon"><strong>3</strong><b>The proof build</b><p>Three red-cell enzyme disorders modelled end to end in the private knowledge base: real reports and a real note in, a full, sourced, structured analysis out. Three is the proof that the pipeline works, not the ambition.</p></article>
+      <article class="horizon"><strong>230</strong><b>Year one: Hematology</b><p>The rare-disease Hematology family: 230 clinical entities in the Orphanet Knowledge Base, and growing as 6,258 not-yet-family-classified entities are resolved.</p></article>
+      <article class="horizon"><strong>10,288</strong><b>Ultimately: every rare disease</b><p>The full Orphanet inventory: 11,456 clinical entities, of which 10,288 are active once obsolete and not-rare-in-Europe entries are excluded.</p></article>
+    </div>
+    <p class="muted small">Counts from the Orphanet Knowledge Base, release 2025-12-09, used under CC BY 4.0 (data © Orphanet / INSERM). They are a moving target as Orphanet updates the inventory and ORPHARA's classification refines family and level figures.</p>
+    <div class="two-col open-core">
+      <div class="card">
+        <h3>Open now: the engine</h3>
+        <p>The disease-blind reasoning core, the knowledge format and compiler, the extractor, the concept adapter, the timeline pass and a local web UI, under the GNU AGPL-3.0. Bundled with a synthetic example model so it builds, tests and demos end to end.</p>
+      </div>
+      <div class="card">
+        <h3>Open after validation: the knowledge</h3>
+        <p>The sourced, reviewed disease models stay private until they are clinically validated. Publishing an unvalidated clinical knowledge base invites it to be used as if it were finished. After validation the full suite, knowledge included, will be open-sourced.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <p class="eyebrow">Future upgrades · the year-one milestone plan</p>
+    <h2>What comes next</h2>
+    <p class="section-copy">The plan for the coming year builds out the Hematology family, milestone by milestone, with every disorder passing the engine's confirmatory-gating and provenance checks. Taken from the project's <a href="https://github.com/nabvian/orphara-engine/blob/main/funding.json">milestone plan</a> and README.</p>
+    <ol class="roadmap">
+      <li class="road"><span class="phase">Month 1</span><b>Hematology family map and engine readiness</b><p>Resolve the ~230 Hematology entities into families and sub-families as a published classification map, and ready the open engine and its public build and CI for group and subtype handling.</p></li>
+      <li class="road"><span class="phase">Months 2–4</span><b>First sub-families end to end</b><p>Sourced dossiers and compiled models for the first sub-families, for example red-cell membrane and haemoglobin disorders, with a progress report of counts and sources.</p></li>
+      <li class="road"><span class="phase">Months 5–7</span><b>Coverage and differentials</b><p>Further sub-families such as coagulation and bone-marrow failure, plus cross-disorder differential reasoning. Engine improvements released publicly.</p></li>
+      <li class="road"><span class="phase">Months 8–10</span><b>Toward full-family coverage</b><p>The remaining Hematology sub-families, each disorder passing confirmatory gating and provenance checks, with cumulative coverage reported.</p></li>
+      <li class="road"><span class="phase">Months 11–12</span><b>Validation package</b><p>A clinician-review package with a synthetic case suite and per-disorder review packets, a public engine release, and a written clinical-validation plan.</p></li>
+      <li class="road"><span class="phase">After validation</span><b>The knowledge base opens</b><p>Once clinically validated, the full suite, knowledge included, is open-sourced.</p></li>
+      <li class="road"><span class="phase">Ultimately</span><b>Every rare disease</b><p>From one family to the full Orphanet inventory of 10,288 active entities, with each entity's level resolved as part of the build.</p></li>
+    </ol>
+    <p class="muted small">To support the work, see <a href="https://github.com/nabvian/orphara-engine/blob/main/funding.json">funding.json</a>; the plan is milestone-based, each tranche released on a concrete deliverable.</p>
+  </div>
+</section>
+
+<section id="run" class="band">
+  <div class="wrap two-col">
+    <div>
+      <p class="eyebrow">Run it locally</p>
+      <h2>Install and run</h2>
+<pre class="block"><code># Rust 1.80 or newer
+git clone https://github.com/nabvian/orphara-engine
+cd orphara-engine
+cargo test --workspace
+cargo run -p concept-adapter --example analyze_note
+cargo run -p poc-server     # local UI on http://127.0.0.1:8794
+
+# your own compiled model, no code change
+ORPHARA_MODEL=/path/to/model.dsdsrc cargo run -p poc-server</code></pre>
+      <p>Nothing phones home; it runs entirely on your machine. A walkthrough is in <a href="https://github.com/nabvian/orphara-engine/blob/main/USAGE.md">USAGE.md</a>, and a Colab notebook runs it with nothing to install.</p>
+    </div>
+    <div>
+      <p class="eyebrow">This page</p>
+      <h2>What runs here</h2>
+      <ul class="plain">
+        <li>The engine crates <code>caretrace</code>, <code>concept-adapter</code>, <code>dsd</code>, <code>dsdc</code>, <code>engine</code>, <code>gnn</code>, <code>reasoning</code> and <code>temporal</code>, unmodified, compiled to one WebAssembly module behind a thin bridge in <code>site/web</code>.</li>
+        <li>The bundled synthetic example model and the synthetic documents from <code>samples/</code>. The private knowledge base is not on this page.</li>
+        <li>PDFs are read by the engine's own PDF reader. In the browser a malformed PDF cannot be caught the way the native build catches it, so the engine is restarted and the file is reported as unreadable.</li>
+      </ul>
+      <p class="muted small">Build <span class="hash" id="build-hash"></span></p>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <p><strong>ORPHARA</strong> engine by Koushik Das · <a href="https://github.com/nabvian/orphara-engine">github.com/nabvian/orphara-engine</a> · GNU AGPL-3.0-only.</p>
+    <p>Research software, not a medical device. The example model is fictional and every document on this page is synthetic. Questions or collaboration: open an issue on the repository.</p>
+  </div>
+</footer>
+<script type="module" src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# lopdf (via pdf-extract, the engine's PDF reader) depends on getrandom. In the
+# browser build it is served by the page's crypto.getRandomValues; see
+# `__getrandom_v03_custom` in src/lib.rs.
+[target.wasm32-unknown-unknown]
+rustflags = ['--cfg', 'getrandom_backend="custom"']

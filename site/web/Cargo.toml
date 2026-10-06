@@ -1,0 +1,36 @@
+[package]
+name = "orphara-web"
+version = "0.1.0"
+edition = "2021"
+license = "AGPL-3.0-only"
+publish = false
+description = "WebAssembly bridge that runs the unmodified ORPHARA engine crates in a browser, for the GitHub Pages demo."
+
+# Not a member of the engine workspace: the engine builds and tests exactly as
+# before. This crate only links the engine crates into one wasm module.
+[workspace]
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+path = "src/lib.rs"
+
+[dependencies]
+core-types = { path = "../../crates/core-types" }
+caretrace = { path = "../../crates/caretrace" }
+concept-adapter = { path = "../../crates/concept-adapter" }
+dsd = { path = "../../crates/dsd" }
+dsdc = { path = "../../crates/dsdc" }
+engine = { path = "../../crates/engine" }
+gnn = { path = "../../crates/gnn" }
+temporal = { path = "../../crates/temporal" }
+serde_json = "1"
+
+[profile.release]
+opt-level = "s"
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = "0.3"
