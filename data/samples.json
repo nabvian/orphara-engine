@@ -1,0 +1,74 @@
+{
+ "samples": {
+  "cbc_visit1.txt": "Complete Blood Count\nReport Date: 4 May 2026\nHemoglobin        9.2 g/dL      13.0-17.0\nMCV               70 fL         80-100\nFerritin          6 ng/mL       30-300\n",
+  "cbc_visit2.txt": "Complete Blood Count\nReport Date: 4 May 2026\nHemoglobin        11.5 g/dL     13.0-17.0\n",
+  "discharge_summary.txt": "Discharge Summary\nDischarge Date: 25 May 2026\nImpression:\nIron deficiency anaemia.\nThalassaemia trait excluded.\n",
+  "doctor_note_g6pd.txt": "Clinical Note\nDate: 6 May 2026\n(synthetic) 28-year-old man.\nJaundice and dark urine after an oxidant drug.\nBlood film shows bite cells and Heinz bodies.\n",
+  "g6pd_assay_timing_trap.txt": "Clinical Note\nDate: 4 May 2026\nPatient: (synthetic) 28-year-old man.\nJaundice and dark urine.\nBlood film: bite cells and Heinz bodies.\nReticulocytosis noted on the film.\nG6PD assay normal.\n",
+  "g6pd_confirmed.txt": "Clinical Note\nDate: 4 May 2026\nPatient: (synthetic) 28-year-old man.\nPresented with jaundice and dark urine.\nPeripheral blood film shows bite cells and Heinz bodies.\nHaemolysis following oxidant exposure.\nAffected maternal uncle (known family history).\nG6PD assay low, confirming the diagnosis.\n",
+  "g6pd_enzyme_report.txt": "Red Cell Enzyme Assay\nReport Date: 6 May 2026\nPatient: (synthetic)\n\nAnalyte             Result     Reference        Flag\nG6PD activity       2.1 U/g    6.0 - 18.0       Low\nMethaemoglobin      0.8 %      0.0 - 2.0\n",
+  "methaemoglobinaemia.txt": "Clinical Note\nDate: 2 March 2026\nPatient: (synthetic) neonate.\nCentral cyanosis with blue lips.\nCyanosis unresponsive to oxygen; chocolate-brown blood on sampling.\nElevated methaemoglobin on co-oximetry.\nDecreased cytochrome b5 reductase with biallelic CYB5R3.\n",
+  "pk_deficiency.txt": "Clinical Note\nDate: 12 June 2026\nPatient: (synthetic) 6-year-old child of consanguineous parents.\nChronic jaundice with splenomegaly.\nPigment gallstones seen on ultrasound.\nDAT-negative, non-spherocytic smear.\nAplastic crisis with parvovirus B19.\nLow pyruvate kinase activity on the enzyme assay.\nBiallelic pathogenic PKLR variants on sequencing.\n"
+ },
+ "presets": [
+  {
+   "id": "missing",
+   "label": "Confirmatory test missing",
+   "docs": [
+    "doctor_note_g6pd.txt"
+   ],
+   "point": "Supportive findings, but the required test is not in the record. The candidate stays Possible and the engine names the missing test."
+  },
+  {
+   "id": "added",
+   "label": "\u2026then add the lab report",
+   "docs": [
+    "doctor_note_g6pd.txt",
+    "g6pd_enzyme_report.txt"
+   ],
+   "point": "The same note plus an enzyme report. The direction comes from the report's own printed reference range, the confirmatory test is now present, and the outcome rises."
+  },
+  {
+   "id": "confirmed",
+   "label": "Fully documented case",
+   "docs": [
+    "g6pd_confirmed.txt"
+   ],
+   "point": "Discriminating findings and the confirmatory test in one note."
+  },
+  {
+   "id": "timing",
+   "label": "Assay timing trap",
+   "docs": [
+    "g6pd_assay_timing_trap.txt"
+   ],
+   "point": "A normal result recorded during a confounding state. The timeline pass flags it as unreliable; it never changes the ranking."
+  },
+  {
+   "id": "cyanotic",
+   "label": "Second disorder",
+   "docs": [
+    "methaemoglobinaemia.txt"
+   ],
+   "point": "The other fictional disorder in the example model. Concepts the model does not contain are quarantined, not invented."
+  },
+  {
+   "id": "record",
+   "label": "Multi-document record",
+   "docs": [
+    "cbc_visit1.txt",
+    "cbc_visit2.txt",
+    "discharge_summary.txt"
+   ],
+   "point": "Two lab reports that disagree, and a claim with no supporting test. The record audit shows both; nothing maps, so the engine abstains."
+  },
+  {
+   "id": "unmapped",
+   "label": "Mostly outside the model",
+   "docs": [
+    "pk_deficiency.txt"
+   ],
+   "point": "Most findings are outside the two-disorder example model, so they are set aside rather than forced into a match."
+  }
+ ]
+}
